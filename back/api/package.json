@@ -1,0 +1,15 @@
+{
+  "name": "nearsoft-front-end-pair-programming",
+  "license": "Copyright 2015 by Nearsoft Inc. All rights reserved.",
+  "scripts": {
+    "start": "./lib/index.js"
+  },
+  "dependencies": {
+    "body-parser": "^1.14.2",
+    "chai": "^3.4.1",
+    "express": "^4.13.3",
+    "is-plain-obj": "^1.1.0"
+  },
+  "devDependencies": {},
+  "private": true
+}

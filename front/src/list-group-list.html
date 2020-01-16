@@ -1,0 +1,78 @@
+<link rel="import" href="list-item.html">
+
+<dom-module id="list-group-list">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      
+      .item {
+        padding: 10px;
+      }
+
+      .normal {
+        background-color: white;
+      }
+
+      .highlight {
+        background-color: aliceblue;
+      }
+    </style>
+
+    <h1>PlayList</h1>
+
+    <dom-repeat id="repeater" items="[[list]]">
+      <template>
+        <div class$="item [[_validateColor(item.checked)]]">
+          <list-item
+            item-number="[[_beautifyIndex(index)]]"
+            item-data="[[item]]"></list-item>
+          </div>
+      </template>
+    </dom-repeat>
+
+  </template>
+
+  <script>
+    /**
+     * `list-group-list` Description
+     *
+     * @summary ShortDescription.
+     * @customElement
+     * @polymer
+     * @extends {Polymer.Element}
+     */
+    class ListGroupList extends Polymer.Element {
+      /**
+       * String providing the tag name to register the element under.
+       */
+      static get is() {
+        return 'list-group-list';
+      }
+
+      /**
+       * Object describing property-related metadata used by Polymer features
+       */
+      static get properties() {
+        return {
+          list: Array
+        };
+      }
+
+      _beautifyIndex(index) {
+        return index + 1
+      }
+
+      _validateColor(checked) {
+        return checked ? 'highlight' : 'normal'
+      }
+
+      refresh() {
+        this.shadowRoot.querySelector('#repeater').render()
+      }
+    }
+
+    window.customElements.define(ListGroupList.is, ListGroupList);
+  </script>
+</dom-module>

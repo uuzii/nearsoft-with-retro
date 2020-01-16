@@ -1,0 +1,198 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/app-route/app-location.html">
+<link rel="import" href="../bower_components/app-route/app-route.html">
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+
+<link rel="import" href="list-editor.html">
+<link rel="import" href="list-dm.html">
+<link rel="import" href="list-group-list.html">
+<link rel="import" href="list-success.html">
+<link rel="import" href="list-utils-behavior.html">
+<link rel="import" href="list-shared-styles.html">
+
+
+<dom-module id="list-app">
+  <template>
+    <style include="list-shared-styles">
+      :host {
+        display: block;
+      }
+
+      header {
+        padding: 10px;
+      }
+
+      main {
+        width: 720px;
+        margin: 0 auto;
+        padding: 10px 0;
+      }
+    </style>
+
+    <app-location route="{{route}}"></app-location>
+    <app-route route="{{route}}" pattern="/:main" data="{{routeData}}"></app-route>
+
+    <list-dm id="dm" url-settings="[[dmUrlSettings]]"></list-dm>
+
+    <header class="flex space-between">
+      <div>Logo</div>
+      <div>Playlist App</div>
+      <div class="flex space-between">
+        <button on-click="requestAdd">Add</button>
+        <button on-click="requestLoad">Load</button>
+        <button on-click="requestSave">Save</button>
+      </div>
+    </header>
+
+    <main>
+      <iron-pages selected="[[routeData.main]]" attr-for-selected="name">
+        <list-group-list
+          name="list"
+          id="list"
+          list={{playList}}></list-group-list>
+        <list-editor
+          name="editor"
+          id="editor"
+          editor-settings="[[editorSettings]]"
+          event-name="list-editor-value"></list-editor>
+        <list-success
+          id="success"
+          name="success"></list-success>
+      </iron-pages>
+    </main>
+  </template>
+
+  <script>
+    /**
+     * `list-app` Description
+     *
+     * @summary ShortDescription.
+     * @customElement
+     * @polymer
+     * @extends {Polymer.Element}
+     */
+    class ListApp extends ListUtilsBehavior(Polymer.Element) {
+      /**
+       * String providing the tag name to register the element under.
+       */
+      static get is() {
+        return 'list-app';
+      }
+
+      /**
+       * Object describing property-related metadata used by Polymer features
+       */
+      static get properties() {
+        return {
+          playList: {
+            type: Array,
+            value: () => []
+          },
+          editorSettings: {
+            type: Object,
+            value: {
+              addMode: true,
+              value: '',
+              currentIndex: 0
+            }
+          },
+          route: Object,
+          routeData: Object,
+          dmUrlSettings: {
+            type: Object,
+            value: {
+              proxy: 'http://127.0.0.1:8080/',
+              base: 'http://localhost:1984',
+              getEndpoint: '/api/load',
+              postEndpoint: '/api/save'
+            }
+          }
+        };
+      }
+
+      /**
+        * Instance of the element is created/upgraded. Useful for initializing
+        * state, set up event listeners, create shadow dom.
+        * @constructor
+        */
+      constructor() {
+        super();
+
+        this.addEventListener('list-dm-data-loaded', (e) => {
+          this.set('playList', e.detail.items)
+        })
+
+        this.addEventListener('list-dm-data-saved', (e) => {
+          this.shadowRoot.querySelector('#success').list = e.detail
+          this.set('routeData.main', 'success')
+        })
+
+        this.addEventListener('back-to-home', () => {
+          this.set('routeData.main', 'list')
+        })
+
+        this.addEventListener('list-editor-value', (e) => e.detail.addMode ? this.addItem(e.detail) : this.editItem(e.detail))
+        this.addEventListener('list-item-edit-btn-tapped', (e) => this.requestEditItem(e.detail))
+        this.addEventListener('list-item-delete-btn-tapped', (e) => this.deleteItem(e.detail.index))
+      }
+
+      /**
+       * Use for one-time configuration of your component after local DOM is
+       * initialized.
+       */
+      ready() {
+        super.ready();
+        this.set('routeData.main', 'list')
+      }
+
+      requestAdd() {
+        let settings = {
+          addMode: true,
+          name: '',
+          currentIndex: 0
+        }
+
+        this.set('editorSettings', settings)
+        this.set('routeData.main', 'editor')
+      }
+
+      requestLoad() {
+        this.shadowRoot.querySelector('#dm').getApiData()
+      }
+
+      requestSave() {
+        this.shadowRoot.querySelector('#dm').saveApiData(this.playList)
+      }
+
+      requestEditItem(data) {
+        let settings = {
+          addMode: false,
+          name: data.name,
+          currentIndex: data.index
+        }
+
+        this.set('editorSettings', settings)
+        this.set('routeData.main', 'editor')
+      }
+
+      addItem(data) {        
+        let model = { name: data.value, checked: false }
+        this.playList.push(model)
+        this.set('routeData.main', 'list')
+        this.shadowRoot.querySelector('#list').refresh()
+      }
+
+      deleteItem(index) {
+        this.playList.splice(index, 1)
+        this.shadowRoot.querySelector('#list').refresh()
+      }
+
+      editItem(data) {
+        this.playList[data.index] = { name: data.value }
+        this.set('routeData.main', 'list')
+        this.shadowRoot.querySelector('#list').refresh()
+      }
+    }
+    window.customElements.define(ListApp.is, ListApp);
+  </script>
+</dom-module>

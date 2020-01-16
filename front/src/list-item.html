@@ -1,0 +1,76 @@
+<link rel="import" href="list-utils-behavior.html">
+
+<dom-module id="list-item">
+  <template>
+    <style include="list-shared-styles">
+      :host {
+        padding: 10px;
+      }
+    </style>
+
+    <div class="flex space-between">
+      <div class="flex">
+        <span>[[itemNumber]]</span>
+        <input type="checkbox" checked$=[[itemData.checked]] on-change="_changeBox">
+        <span>[[itemData.name]]</span>
+      </div>
+      <div class="flex">
+        <button id="editBtn" on-click="_dispatchActionEvent" data-button-action="edit">Edit</button>
+        <button id="deleteBtn" on-click="_dispatchActionEvent" data-button-action="delete">Delete</button>
+      </div>
+    </div>
+
+  </template>
+
+  <script>
+    /**
+     * `list-item` Description
+     *
+     * @summary ShortDescription.
+     * @customElement
+     * @polymer
+     * @extends {Polymer.Element}
+     */
+    class ListItem extends ListUtilsBehavior(Polymer.Element) {
+      /**
+       * String providing the tag name to register the element under.
+       */
+      static get is() {
+        return 'list-item';
+      }
+
+      /**
+       * Object describing property-related metadata used by Polymer features
+       */
+      static get properties() {
+        return {
+          itemNumber: {
+            type: Number,
+            value: 0
+          },
+
+          itemData: {
+            type: Object,
+            value: { name: 'Skeleton name', checked: false }
+          }
+        };
+      }
+
+      /**
+        @event list-item-edit-btn-tapped
+        @event list-item-delete-btn-tapped
+      */
+      _dispatchActionEvent(e) {
+        let selectedBtn = e.target.getAttribute('data-button-action')
+        let detail = {
+          index: this.itemNumber - 1,
+          name: this.itemData.name
+        }
+        this.eventDispatcher(`list-item-${selectedBtn}-btn-tapped`, detail)
+      }
+
+    }
+
+    window.customElements.define(ListItem.is, ListItem);
+  </script>
+</dom-module>

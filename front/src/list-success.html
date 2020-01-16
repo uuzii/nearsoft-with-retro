@@ -1,0 +1,53 @@
+<link rel="import" href="list-utils-behavior.html">
+
+<dom-module id="list-success">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+
+    <h1>Data saved!</h1>
+    <ul>
+      <dom-repeat items="[[list]]">
+        <template>
+          <li>[[item.name]]</li>
+        </template>
+      </dom-repeat>
+    </ul>
+
+    <button on-click="backToHome">Go home</button>
+
+  </template>
+
+  <script>
+    /**
+     * `list-success` Description
+     *
+     * @summary ShortDescription.
+     * @customElement
+     * @polymer
+     * @extends {Polymer.Element}
+     */
+    class ListSuccess extends ListUtilsBehavior(Polymer.Element) {
+      /**
+       * String providing the tag name to register the element under.
+       */
+      static get is() {
+        return 'list-success';
+      }
+
+      /**
+       * Object describing property-related metadata used by Polymer features
+       */
+      static get properties() {
+        return {
+          list: Array
+        };
+      }
+    }
+
+    window.customElements.define(ListSuccess.is, ListSuccess);
+  </script>
+</dom-module>

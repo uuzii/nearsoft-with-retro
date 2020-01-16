@@ -1,0 +1,26 @@
+<dom-module id="list-utils-behavior">
+  <script>
+    ListUtilsBehavior = (superClass) => class extends superClass {
+      /**
+        * Instance of the element is created/upgraded. Useful for initializing
+        * state, set up event listeners, create shadow dom.
+        * @constructor
+        */
+      constructor() {
+        super();
+      }
+
+      backToHome() {
+        this.eventDispatcher('back-to-home')
+      }
+
+      eventDispatcher(eventName, detail) {
+        this.dispatchEvent(new CustomEvent(eventName, {
+          detail: detail,
+          bubbles: true,
+          composed: true
+        }));
+      }
+    }
+  </script>
+</dom-module>

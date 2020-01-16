@@ -1,0 +1,77 @@
+<link rel="import" href="list-utils-behavior.html">
+
+<dom-module id="list-dm">
+  <script>
+    /**
+     * `list-dm` Description
+     *
+     * @summary ShortDescription.
+     * @customElement
+     * @polymer
+     * @extends {Polymer.Element}
+     */
+    class ListDm extends ListUtilsBehavior(Polymer.Element) {
+      /**
+       * String providing the tag name to register the element under.
+       */
+      static get is() {
+        return 'list-dm';
+      }
+
+      /**
+        * Object describing property-related metadata used by Polymer features
+        */
+      static get properties() {
+        return {
+          urlSettings: Object,
+
+          eventNames: {
+            type: Object,
+            value: {
+              getEvt: 'list-dm-data-loaded',
+              postEvt: 'list-dm-data-saved'
+            }
+          }
+        };
+      }
+
+      /**
+       * Use for one-time configuration of your component after local DOM is initialized. 
+       */
+      ready() {
+        super.ready();
+        this.getApiData()
+      }
+
+      async getApiData() {
+        const getUrl = this.urlSettings.proxy + this.urlSettings.base + this.urlSettings.getEndpoint
+        try {
+          const payload = await fetch(getUrl)
+          const list = await payload.json()
+          this.eventDispatcher(this.eventNames.getEvt, list)
+        } catch (error) {
+          console.error('Cannot load api data')
+        }
+      }
+
+      saveApiData(data) {
+        const postUrl = this.urlSettings.proxy + this.urlSettings.base + this.urlSettings.postEndpoint
+        const body = { items: data }
+
+        fetch(postUrl, {
+          method: 'POST',
+          body: JSON.stringify(body),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+        .then(resp => resp.json())
+        .then(response => {
+          this.eventDispatcher(this.eventNames.postEvt, response.items)
+        })
+        .catch(err => console.error(err))
+      }
+    }
+    window.customElements.define(ListDm.is, ListDm);
+  </script>
+</dom-module>
