@@ -22,31 +22,39 @@ We need a proxy to avoid cors issue, install the packgages with this command
     cd nearsoft-with-retro/back/proxy
     npm install cors-anywhere
 
-This command serves the app ar `http://localhost:8080/` and provides a method for
+Run this command to serve the app at `http://localhost:8080/` the command also provides a method for
 intercept the frontend requests and add headers to avoid the cors block
 
     node cors.js
 
 ### Configure and serve the api
 
-Donwload the api files install the environment settings
+Donwload the api files install the environment settings with this commands:
 
     cd nearsoft-with-retro/back/api
     npm install --production
 
-This command serves the app at `http://localhost:1984/` and provides the api rest for the app:
+The next command serves the app at `http://localhost:1984/` and provides the api rest for the app:
 
     npm start
 
 ### Start the app locally
 
-Donwload the frontend components
+Donwload the frontend components with this commands:
 
     cd nearsoft-with-retro/front
     bower install
 
-This command serves the app at `http://127.0.0.1:8081/list` and provides basic URL
+The next command serves the app at `http://127.0.0.1:8081/list` and provides basic URL
 routing for the app:
 
     polymer serve
+
+### Navigate trough the app
+
+You have the following views in the app:
+
+1. Home view: `http://127.0.0.1:8081/list`
+2. Input view: `http://127.0.0.1:8081/editor`
+3. Success view: `http://127.0.0.1:8081/success`
 
