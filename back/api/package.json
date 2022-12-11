@@ -7,7 +7,7 @@
   "dependencies": {
     "body-parser": "^1.14.2",
     "chai": "^3.4.1",
-    "express": "^4.13.3",
+    "express": "^4.17.3",
     "is-plain-obj": "^1.1.0"
   },
   "devDependencies": {},
